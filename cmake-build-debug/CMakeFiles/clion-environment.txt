@@ -1,0 +1,2 @@
+ToolSet: w64 5.0@C:\mingw64
+CMake: 3.6.3@C:\Program Files (x86)\JetBrains\bin\cmake\bin\cmake.exe
