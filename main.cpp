@@ -1,47 +1,34 @@
 #include <iostream>
-#include <sstream>
-#include <cassert>
 #include <vector>
+using namespace std;
+
 #include "temperature.h"
 
-using namespace std;
-char Scale[] = "CKF";
-void test_temperature_input(){
-    Temperature Temp;
-    string inp = "10C";
-    istringstream iss(inp);
-    iss >> Temp;
-    assert(Temp.temp == 10);
-    assert(Temp.scale == 'C');
-    istringstream issC("0K");
-    issC >> Temp;
-    assert(Temp.temp == 0);
-    assert(Temp.scale == 'K');
-    istringstream issF("-400F");
-    issF >> Temp;
-    assert(Temp.temp == -400);
-    assert(Temp.scale == 'F');
-};
+
+
 int
 main() {
-    test_temperature_input();
+
     size_t number_count;
     cerr << "Enter number count: ";
     cin >> number_count;
 
     cerr << "Enter numbers: ";
-    vector<double> numbers(number_count);
+    vector<Temperature> numbers(number_count);
     for (size_t i = 0; i < number_count; i++) {
         cin >> numbers[i];
+        if (!cin) { cerr <<"Necorrectniyi vvod";
+        return 1; }
     }
+
 
     size_t column_count;
     cerr << "Enter column count: ";
     cin >> column_count;
 
-    double min = numbers[0];
-    double max = numbers[0];
-    for (double number : numbers) {
+    Temperature min = numbers[0];
+    Temperature max = numbers[0];
+    for (Temperature number : numbers) {
         if (number < min) {
             min = number;
         }
@@ -50,9 +37,13 @@ main() {
         }
     }
 
+    max = convert(max, min.scale);
+
     vector<size_t> counts(column_count);
-    for (double number : numbers) {
-        size_t column = (size_t)((number - min) / (max - min) * column_count);
+    for (Temperature number : numbers) {
+        number = convert(number, min.scale);
+        size_t column = (size_t)((number.value - min.value) / (max.value - min.value) *
+                column_count);
         if (column == column_count) {
             column--;
         }
@@ -69,7 +60,7 @@ main() {
         if (count > max_count) {
             max_count = count;
         }
-    }
+    };
     const bool scaling_needed = max_count > chart_width;
 
     for (size_t count : counts) {
